@@ -25,6 +25,7 @@
     ```
     /Users/xxx/.ide_home/bin/ide start
     ```
+    - Create Workspace, File -> Create Workspace, choose the host you've created and then input the workspace name you'd to create.
     
     
     
