@@ -1,13 +1,47 @@
 ROSTemplateFormatVersion: '2015-09-01'
 Transform: 'Aliyun::Serverless-2018-04-03'
 Resources:
-  reflection:
+  reflection_demo:
     Type: 'Aliyun::Serverless::Service'
     Properties:
-      Description: 'helloworld'
+      Description: ''
     reflection:
       Type: 'Aliyun::Serverless::Function'
       Properties:
         Handler: index.handler
         Runtime: nodejs8
         CodeUri: 'index.js'
+        EnvironmentVariables:
+          InstanceName: views-count-inst
+          TableName: viewsTablesName
+          Endpoint: https://reflection.cn-shenzhen.ots.aliyuncs.com
+
+
+  serverless:
+    Type: 'Aliyun::Serverless::TableStore'
+    Properties:
+      ClusterType: HYBRID
+      Description: used for views_count_demo
+    reflection: # table name
+      Type: 'Aliyun::Serverless::TableStore::Table'
+      Properties:
+          PrimaryKeyList:
+            - Name: company
+              Type: INTEGER
+            - Name: id
+              Type: INTEGER
+
+  reflection_apis:
+    Type: 'Aliyun::Serverless::Api'
+    Properties:
+      StageName: RELEASE
+      DefinitionBody:
+        '/':
+          get:
+            x-aliyun-apigateway-api-name: reflections
+            x-aliyun-apigateway-request-config:
+              requestMode: "PASSTHROUGH"
+              requestProtocol: "http"
+            x-aliyun-apigateway-fc:
+              arn: acs:fc:::services/${reflection_demo.Arn}/functions/${reflection.Arn}/
+
