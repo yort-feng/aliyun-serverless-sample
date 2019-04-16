@@ -10,18 +10,19 @@ Resources:
       Properties:
         Handler: index.handler
         Runtime: nodejs8
-        CodeUri: 'index.js'
+        CodeUri: './'
+        Timeout: 60
         EnvironmentVariables:
-          InstanceName: views-count-inst
-          TableName: viewsTablesName
-          Endpoint: https://reflection.cn-shenzhen.ots.aliyuncs.com
+          InstanceName: serverless
+          TableName: reflection
+          Endpoint: https://serverless.cn-shenzhen.ots.aliyuncs.com
 
 
   serverless:
     Type: 'Aliyun::Serverless::TableStore'
     Properties:
       ClusterType: HYBRID
-      Description: used for views_count_demo
+      Description: used for reflection demo
     reflection: # table name
       Type: 'Aliyun::Serverless::TableStore::Table'
       Properties:
@@ -41,7 +42,13 @@ Resources:
             x-aliyun-apigateway-api-name: reflections
             x-aliyun-apigateway-request-config:
               requestMode: "PASSTHROUGH"
-              requestProtocol: "http"
+              requestProtocol: "http,https"
             x-aliyun-apigateway-fc:
               arn: acs:fc:::services/${reflection_demo.Arn}/functions/${reflection.Arn}/
-
+          post:
+            x-aliyun-apigateway-api-name: create_reflection
+            x-aliyun-apigateway-request-config:
+              requestMode: "PASSTHROUGH"
+              requestProtocol: "http,https"
+            x-aliyun-apigateway-fc:
+              arn: acs:fc:::services/${reflection_demo.Arn}/functions/${reflection.Arn}/
