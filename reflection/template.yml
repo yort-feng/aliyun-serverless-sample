@@ -38,6 +38,7 @@ Resources:
       StageName: RELEASE
       DefinitionBody:
         '/':
+          # settings of apigateway - https://help.aliyun.com/document_detail/43623.html?spm=a2c4e.11153940.blogcont689185.22.c97fd474aqdILf#h2-u8BF7u6C42u53C2u65702
           get:
             x-aliyun-apigateway-api-name: reflections
             x-aliyun-apigateway-request-config:
@@ -45,6 +46,7 @@ Resources:
               requestProtocol: "http,https"
             x-aliyun-apigateway-fc:
               arn: acs:fc:::services/${reflection_demo.Arn}/functions/${reflection.Arn}/
+            x-aliyun-apigateway-visibility: "PUBLIC"
           post:
             x-aliyun-apigateway-api-name: create_reflection
             x-aliyun-apigateway-request-config:
@@ -52,3 +54,4 @@ Resources:
               requestProtocol: "http,https"
             x-aliyun-apigateway-fc:
               arn: acs:fc:::services/${reflection_demo.Arn}/functions/${reflection.Arn}/
+            x-aliyun-apigateway-visibility: "PUBLIC"
