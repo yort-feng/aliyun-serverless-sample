@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "nodemailer": "^6.1.1",
     "tablestore": "^4.3.1"
   }
 }
