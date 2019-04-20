@@ -47,6 +47,7 @@ Resources:
             x-aliyun-apigateway-fc:
               arn: acs:fc:::services/${reflection_demo.Arn}/functions/${reflection.Arn}/
             x-aliyun-apigateway-visibility: "PUBLIC"
+            x-aliyun-apigateway-result-type: "JSON"
           post:
             x-aliyun-apigateway-api-name: create_reflection
             x-aliyun-apigateway-request-config:
@@ -55,3 +56,4 @@ Resources:
             x-aliyun-apigateway-fc:
               arn: acs:fc:::services/${reflection_demo.Arn}/functions/${reflection.Arn}/
             x-aliyun-apigateway-visibility: "PUBLIC"
+            x-aliyun-apigateway-result-type: "JSON"
