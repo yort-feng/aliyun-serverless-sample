@@ -15,6 +15,16 @@
   margin-bottom: 15px;
 }
 
+.column-content {
+  text-align: left;
+  word-break: normal;
+  white-space: pre-wrap;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  
+}
+
 .collection-modal .ant-modal-header, .ant-modal-footer {
   text-align: center;
 }

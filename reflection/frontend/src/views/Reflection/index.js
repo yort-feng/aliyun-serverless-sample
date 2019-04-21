@@ -5,9 +5,11 @@ import Modal from "antd/lib/modal"
 import Form from "antd/lib/form"
 import Input from "antd/lib/input"
 import Select from "antd/lib/select"
+import message from "antd/lib/message"
 import "./index.css"
 
 import * as reflectionApi from '../../api/reflection'
+import { REFLECTION_LIST } from './constant'
 
 class App extends Component {
 
@@ -15,91 +17,104 @@ class App extends Component {
     super(...arguments)
     this.state = {
       visible: false,
+      confirmLoading: false,
       pageSize: 10,
+      pageNum: 1,
+      endRow: 0,
+      typeData: {},
       dataSource: [],
       columns: [],
-      form: {
-
-      }
     }
   }
 
-  componentDidMount () {
-    reflectionApi.getReflectionList({}).then(res => {
-      console.log(res)
-    }).catch(err => {
-      console.log(err)
-    })
-    const dataSource = [
+  columns = () => {
+    return [
       {
-        id: 1,
-        type: 1,
-        creator: 'le.li',
-        content: '这是复盘',
-        tos: 'hah',
-        time: '2019-01-12'
-      }, {
-        id: 1,
-        type: 1,
-        creator: 'le.li',
-        content: '这是复盘',
-        tos: 'hah',
-        time: '2019-01-12'
-      }, {
-        id: 1,
-        type: 1,
-        creator: 'le.li',
-        content: '这是复盘',
-        tos: 'hah',
-        time: '2019-01-12'
-      }, {
-        id: 1,
-        type: 1,
-        creator: 'le.li',
-        content: '这是复盘',
-        tos: 'hah',
-        time: '2019-01-12'
-      }
-    ]
-    const columns = [
-      {
-        align: "center",
         width: 100,
+        align: "center",
         title: "ID",
         dataIndex: "id",
         key: "id"
       }, {
+        width: 200,
         align: "center",
-        title: "Type",
+        title: "复盘类型",
         dataIndex: "type",
-        key: "type"
+        key: "type",
+        render: (text) => (<div>{this.getTypeData(text)}</div>)
       }, {
         align: "center",
-        title: "Content",
+        title: "复盘内容",
         dataIndex: "content",
-        key: "content"
+        key: "content",
+        render: (text) => (<div className="column-content">{text}</div>)
       }, {
-        align: "center",
         width: 100,
-        title: "Creator",
+        align: "center",
+        title: "创建人",
         dataIndex: "creator",
         key: "creator"
       }, {
+        width: 200,
         align: "center",
-        title: "Tos",
+        title: "收件箱",
         dataIndex: "tos",
-        key: "tos"
-      }, {
-        align: "center",
-        width: 140,
-        title: "Time",
-        dataIndex: "time",
-        key: "time"
+        key: "tos",
+        render: (text) => {
+          return text.split(',').map((item, index) => {
+            return <div key={index} className="column-content">{item}</div>
+          })
+        }
       }
     ]
+  }
+
+  getTypeData = (typeId) => {
+    const typeData = this.state.typeData
+    if (typeData.hasOwnProperty(typeId)) {
+      return typeData[typeId]
+    } else {
+      return '-'
+    }
+  }
+
+  componentDidMount () {
+    let params = {
+      pageSize: this.state.pageSize,
+      pageNum: this.state.pageNum
+    }
+
+
+    this.getReflectionList(params)
+
+    let typeData = {}
+    REFLECTION_LIST.forEach(item => {
+      let data = {}
+      item.children.forEach(child => {
+        data[child.value] = child.content
+      })
+      typeData = {
+        ...data,
+        ...typeData
+      }
+    })
+
     this.setState({
-      dataSource: dataSource,
-      columns: columns
+      columns: this.columns(),
+      typeData: typeData
+    })
+  }
+
+  getReflectionList = (params) => {
+    reflectionApi.getReflectionList(params).then(res => {
+      const dataSource = res.list || []
+      const endRow = parseInt(res.endRow) || 0
+      this.setState({
+        endRow: endRow,
+        dataSource: dataSource
+      })
+    }).catch(err => {
+      console.log(err)
     })
   }
 
@@ -119,20 +134,46 @@ class App extends Component {
 
   handleCreate = () => {
     const form = this.formRef.props.form
-    form.validateFields((err, values) => {
+    form.validateFields(async (err, values) => {
       if (err) {
         return
       }
-      this.setState({
-        visible: false
-      })
+
+      try {
+        const tos = values.tos.replace(/\s+/g, '')
+        const params = {
+          ...values,
+          tos: tos
+        }
+        this.setState({
+          confirmLoading: true
+        })
+        await reflectionApi.createReflection(params)
+        message.success('提交成功')
+      } catch (err) {
+        console.log(err)
+      } finally {
+        this.setState({
+          confirmLoading: false,
+          visible: false,
+          pageNum: 1
+        })
+        this.getReflectionList({ pageSize: this.state.pageSize, pageNum: 1 })
+      }
     })
   }
 
   handleTableChange = (pagination) => {
     const { pageSize, current } = pagination
-    console.log(pageSize)
-    console.log(current)
+    this.setState({
+      pageSize: pageSize,
+      pageNum: current
+    })
+    const params = {
+      pageSize: pageSize,
+      pageNum: current
+    }
+    this.getReflectionList(params)
   }
 
   saveFormRef = (formRef) => {
@@ -140,7 +181,7 @@ class App extends Component {
   }
 
   render () {
-    const { visible, pageSize, dataSource, columns } = this.state
+    const { visible, confirmLoading, pageSize, endRow, dataSource, columns } = this.state
     return (
       <div className="app">
         <header className="app-header">复盘管理</header>
@@ -151,10 +192,22 @@ class App extends Component {
           <CollectionCreateForm
             wrappedComponentRef={this.saveFormRef}
             visible={visible}
+            confirmLoading={confirmLoading}
             onCancel={this.handleCancel}
             onCreate={this.handleCreate}
           ></CollectionCreateForm>
-          <Table dataSource={dataSource} columns={columns} bordered={true} pagination={{ pageSize: pageSize }} onChange={this.handleTableChange} />
+          <Table
+            dataSource={dataSource}
+            columns={columns}
+            rowKey='id'
+            pagination={{
+              pageSize: pageSize,
+              total: endRow,
+              showTotal: ((total) => {
+                return `共 ${total} 条`
+              })
+            }}
+            onChange={this.handleTableChange} />
         </div>
       </div>
     )
@@ -163,10 +216,32 @@ class App extends Component {
 
 const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
   class extends Component {
+
+    validateEmail = (rule, value, callback) => {
+      if (!value) {
+        callback('请输入收件箱，多个请用英文逗号隔开')
+      } else {
+        const list = value.split(',')
+        const reg = /^([a-zA-Z0-9+_.-])+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*\.[a-zA-Z0-9]{2,6}$/
+        let invalid
+        list.forEach(item => {
+          if (!reg.test(item.trim())) {
+            invalid = true
+          }
+        })
+        if (invalid) {
+          callback('邮箱格式不正确')
+        } else {
+          callback()
+        }
+      }
+    }
+
     render () {
-      const { visible, onCancel, onCreate, form } = this.props
+      const { visible, confirmLoading, onCancel, onCreate, form } = this.props
       const { getFieldDecorator } = form
       const { Option, OptGroup } = Select
+      const selectOptions = REFLECTION_LIST
       const formItemLayout = {
         labelCol: {
           xs: { span: 24 },
@@ -184,47 +259,58 @@ const CollectionCreateForm = Form.create({ name: 'form_in_modal' })(
           title="新建复盘信息"
           okText="提交"
           cancelText="取消"
+          confirmLoading={confirmLoading}
           onCancel={onCancel}
           onOk={onCreate}  >
           <Form {...formItemLayout}>
-            <Form.Item label="Type">
+            <Form.Item label="复盘类型">
               {
                 getFieldDecorator('type', {
                   rules: [{ required: true, message: '请选择复盘类型' }]
                 })(
-                  <Select>
-                    <OptGroup label="执行篇">
-                      <Option value={11}>沟通后没有清晰的决策和明确的执行人</Option>
-                      <Option value={12}>个人管理不好自己的工作，承担下来的工作有头无尾</Option>
-                    </OptGroup>
+                  <Select placeholder="请选择复盘类型">
+                    {
+                      selectOptions.map(item => (
+                        <OptGroup key={item.name} label={item.title}>
+                          {
+                            item.children.map(child => (
+                              <Option key={child.value} value={child.value}>{child.content}</Option>
+                            ))
+                          }
+                        </OptGroup>
+                      ))
+                    }
                   </Select>
                 )
               }
             </Form.Item>
-            <Form.Item label="Creator">
+            <Form.Item label="创建人">
               {
                 getFieldDecorator('creator', {
                   rules: [{ required: true, message: '请输入创建人' }]
                 })(
-                  <Input />
+                  <Input placeholder="请输入创建人" />
                 )
               }
             </Form.Item>
-            <Form.Item label="Tos">
+            <Form.Item label="收件箱">
               {
                 getFieldDecorator('tos', {
-                  rules: [{ required: true, message: '请输入收件人' }]
+                  validateTrigger: ['onBlur'],
+                  rules: [
+                    { required: true, validator: this.validateEmail }
+                  ]
                 })(
-                  <Input />
+                  <Input.TextArea placeholder="请输入收件箱，多个请用英文逗号隔开" rows={4} />
                 )
               }
             </Form.Item>
-            <Form.Item label="Content">
+            <Form.Item label="复盘内容">
               {
                 getFieldDecorator('content', {
                   rules: [{ required: true, message: '请输入复盘内容' }]
                 })(
-                  <Input.TextArea rows={4} />
+                  <Input.TextArea placeholder="请输入复盘内容" rows={6} />
                 )
               }
             </Form.Item>

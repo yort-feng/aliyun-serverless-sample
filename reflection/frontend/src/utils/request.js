@@ -1,5 +1,6 @@
 import qs from 'qs'
-export const baseURL = 'https://backend.lanjingerp.com/'
+import message from "antd/lib/message"
+export const baseURL = 'http://43fb4816464a4c47bdb3727d5b2c9491-cn-shenzhen.alicloudapi.com/'
 
 const codeMessage = {
   200: '成功',
@@ -14,7 +15,6 @@ const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response
   }
-
   const errortext = codeMessage[response.status] || response.statusText
   const error = new Error(errortext)
   error.name = response.status
@@ -35,9 +35,9 @@ export default async function request (url, options) {
   }
 
   const newOptions = { ...options }
-  if (newOptions.method === 'POST' ||
-    newOptions.method === 'PUT' ||
-    newOptions.method === 'DELETE') {
+  if (newOptions.method === 'post' ||
+    newOptions.method === 'put' ||
+    newOptions.method === 'delete') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         'Accept': 'application/json',
@@ -81,6 +81,7 @@ export default async function request (url, options) {
           console.log('账号或密码错误')
           break
         default:
+          message.error(err.response.statusText)
           break
       }
       return Promise.reject(err)
