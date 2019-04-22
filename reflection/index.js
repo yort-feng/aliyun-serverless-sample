@@ -18,7 +18,7 @@ async function getAllReflections(client, pageSize, pageNum) {
         tableName: process.env['TableName'],
         indexName: "idx_company",
         searchQuery: {
-            offset: pageNum - 1,
+            offset: (pageNum - 1) * pageSize,
             limit: pageSize,
             query: {
                 queryType: TableStore.QueryType.MATCH_ALL_QUERY
@@ -30,7 +30,7 @@ async function getAllReflections(client, pageSize, pageNum) {
             returnNames: ["type", "content", "creator", "tos", "time_stamp"]
         }
     });
-    let endRow = res.totalCounts;
+    let endRow = parseInt(res.totalCounts);
     let hasNextPage = res.totalCounts > pageSize * pageNum;
     let hasPreviousPage = pageNum !== 1;
     let list = res.rows.map((row)=>{
