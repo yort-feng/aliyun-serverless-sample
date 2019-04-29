@@ -30,8 +30,10 @@ An example of web application, it demonstrates how to setup your own Serverless 
         npm install
         npm run build
         ```
-    - create OSS buket
-    
+    - create OSS buket, make it Public to allow erveryone can visit it.
+    - import static files to the OSS buket
+    - Basic Settings -> Static Pages
+    - Bind Self-Hosted Domain Name(Not necessary)
 
 ## How it works
 ### TODO
