@@ -1,0 +1,59 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  reflection_demo:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Description: ''
+    reflection:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Handler: index.handler
+        Runtime: nodejs8
+        CodeUri: './'
+        Timeout: 60
+        EnvironmentVariables:
+          InstanceName: serverless
+          TableName: reflection
+          Endpoint: https://serverless.cn-shenzhen.ots.aliyuncs.com
+
+
+  serverless:
+    Type: 'Aliyun::Serverless::TableStore'
+    Properties:
+      ClusterType: HYBRID
+      Description: used for reflection demo
+    reflection: # table name
+      Type: 'Aliyun::Serverless::TableStore::Table'
+      Properties:
+          PrimaryKeyList:
+            - Name: company
+              Type: INTEGER
+            - Name: id
+              Type: INTEGER
+
+  reflection_apis:
+    Type: 'Aliyun::Serverless::Api'
+    Properties:
+      StageName: RELEASE
+      DefinitionBody:
+        '/reflections':
+          # settings of apigateway - https://help.aliyun.com/document_detail/43623.html?spm=a2c4e.11153940.blogcont689185.22.c97fd474aqdILf#h2-u8BF7u6C42u53C2u65702
+          get:
+            x-aliyun-apigateway-api-name: reflections
+            x-aliyun-apigateway-request-config:
+              requestMode: "PASSTHROUGH"
+              requestProtocol: "http,https"
+            x-aliyun-apigateway-fc:
+              arn: acs:fc:::services/${reflection_demo.Arn}/functions/${reflection.Arn}/
+            x-aliyun-apigateway-visibility: "PUBLIC"
+            x-aliyun-apigateway-result-type: "JSON"
+          post:
+            x-aliyun-apigateway-api-name: create_reflection
+            x-aliyun-apigateway-request-config:
+              requestMode: "PASSTHROUGH"
+              requestProtocol: "http,https"
+            x-aliyun-apigateway-fc:
+              arn: acs:fc:::services/${reflection_demo.Arn}/functions/${reflection.Arn}/
+            x-aliyun-apigateway-visibility: "PUBLIC"
+            x-aliyun-apigateway-result-type: "JSON"

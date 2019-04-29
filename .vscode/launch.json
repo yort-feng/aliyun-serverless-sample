@@ -1,0 +1,17 @@
+///////////////// config begin /////////////////
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "fc/reflection_demo/reflection",
+            "type": "node",
+            "request": "attach",
+            "address": "localhost",
+            "port": 3000,
+            "localRoot": "/Users/troy/Documents/workspace/git/aliyun-serverless-sample/reflection",
+            "remoteRoot": "/code",
+            "protocol": "inspector",
+            "stopOnEntry": false
+        }
+    ]
+}

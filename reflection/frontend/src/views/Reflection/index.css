@@ -1,0 +1,30 @@
+@import '~antd/dist/antd.css';
+
+.app {
+  padding: 20px 30px;
+}
+
+.app-header {
+  font-size: 26px;
+  text-align: center;
+  background-color: #fff;
+}
+
+.operation {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.column-content {
+  text-align: left;
+  word-break: normal;
+  white-space: pre-wrap;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  
+}
+
+.collection-modal .ant-modal-header, .ant-modal-footer {
+  text-align: center;
+}
