@@ -1,5 +1,5 @@
 # Reflection
-An example of web application, it demonstrates how to setup your own Serverless Application by using Function, Tablestore, Api-gateway and OSS, all of them are provided by Alibaba Cloud.
+An example of web application, it demonstrates how to setup your own Serverless Application by using Function, Tablestore(OTS), Api-gateway and OSS, all of them are provided by Alibaba Cloud.
 ## Quick Start
 
 1. **[Registe for an Aliyun account](https://account.aliyun.com/register/register.htm)**
@@ -17,18 +17,24 @@ An example of web application, it demonstrates how to setup your own Serverless 
 4. **Create a Table Store Instance and Table, [the table store address of Aliyun](https://ots.console.aliyun.com)**
     - Create Instance, the default name is serverless, if you'd like to change it, you need to replace the EnvironmentVariables.InstanceName of the template.yml with yours.
     - Create Table, the defualt name is reflection, if you'd like to change it, you need to replace the EnvironmentVariables.InstanceName of the template.yml with yours.
+    - Add primary keys, id's type is autoIncrement
+            company
+              Type: INTEGER
+            Name: id
+              Type: INTEGER
     
-5. **Build and Deploy frontend application**
+5. **`Fun Deploy`**
+6. **Build and Deploy frontend application**
     - npm build
         ```cd frontend
         npm install
         npm run build
         ```
-    - creat OSS buket
+    - create OSS buket
     
 
-
-
+## How it works
+### TODO
 
 
 ## Another Way for Developing
