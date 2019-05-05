@@ -36,8 +36,15 @@ An example of web application, it demonstrates how to setup your own Serverless 
     - Bind Self-Hosted Domain Name(Not necessary)
 
 ## How it works
-### TODO
-
+### ![image](how-it-works.png)
+### [OSS](https://www.alibabacloud.com/product/oss?spm=a3c0i.7911826.1160486.dproductb1.635214b3CJuhvB) - Object Storage Service
+#### An encrypted and secure cloud storage service which stores, processes and accesses massive amounts of data from anywhere in the world
+### [API-Gateway](https://www.alibabacloud.com/product/api-gateway?spm=a3c0i.7911826.1160486.dproducti2.635214b3YkXU9d)
+#### API Gateway provides you with high-performance and highly available API hosting services to deploy and release your APIs on Alibaba Cloud products.
+### [Function Compute](https://www.alibabacloud.com/products/function-compute)
+#### A fully hosted and serverless running environment that takes away the need to manage infrastructure such as servers and enables developers to focus on writing and uploading code.
+### [OTS](https://www.alibabacloud.com/product/table-store?spm=a3c0i.7911826.1160486.dproductb2.635214b3CJuhvB) - Table Store
+#### A fully managed NoSQL cloud database service that enables storage of a massive amount of structured and semi-structured data.
 
 ## Another Way for Developing
 
