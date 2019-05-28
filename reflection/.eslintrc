@@ -1,3 +1,7 @@
 {
+<<<<<<< HEAD
   "extends": "aftership"
+=======
+  "extends": "airbnb"
+>>>>>>> add: eslint & airbnb.
 }

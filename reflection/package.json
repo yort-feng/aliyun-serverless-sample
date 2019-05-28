@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint --ext .{jsx|vue},.js ."
   },
   "author": "",
   "license": "ISC",
@@ -12,11 +12,17 @@
     "tablestore": "^4.3.1"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "eslint": "^5.16.0",
     "eslint-config-aftership": "^5.1.0",
     "eslint-plugin-import": "^2.17.2"
   },
   "scripts": {
     "lint": "eslint --ext .{jsx|vue},.js ."
+=======
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.13.0"
+>>>>>>> add: eslint & airbnb.
   }
 }
